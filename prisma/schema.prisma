@@ -37,6 +37,11 @@ model User{
   status                UserStatus    @default(PENDING)
   createdAt             DateTime      @default(now())
   updated               DateTime      @updatedAt
+  role                  Role?         @relation(fields: [roleId], reference: [id])
+  roleId                String?
+
+  profile Profile?
+  refreshToken  RefreshToken[]
 }
 
 model Role{
@@ -71,13 +76,52 @@ model RolePermission{
   roleId                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id
   permissionId              String
 
-  permission                Permission?   @relation(fields:[permissionId], reference:[id])
+  permission                Permission?   @relation(fields:[permissionId], reference:[id],onDelete: Cascade)
   createdAt                 DateTime      @default(now())
   updated                   DateTime      @updatedAt
+  roleId                    Role          @relation(fields:[permissionId], reference:[id],onDelete: Cascade)
 
 
   @@id([roleId, permissionId])
   @@index([roleId])
   @@index([permissionId])
+}
+
+model Profile{
+  Id                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id
+  gender                Gender
+  dateOfBirth           DateTime?
+  avartar               String?
+  bio                   String?
+  city                  String?
+  state                 String?
+  country               String?
+  postalCode            String?
+  userId                String          @unique
+  
+  user User             @relation(fields: [userId], reference:[id],onDelete:Cascade)
+}
+
+model RefreshToken{
+  Id                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id
+  token                 String        @unique
+  expiresat             DateTime
+  IsRevoked             Boolean       @default(false)
+  revokedAt             DateTime?
+  deviceName            String?
+  iPAddress             String?
+  userAgent             String?
+  UserId                String
+  user                  User          @reference(fields:[UserId], reference:[id], onDelete: Cascade)
+  createdAt             DateTime      @default(now())
+
+  @@index([UserId])
+  
+
+
+
+
+
+
 
 }
