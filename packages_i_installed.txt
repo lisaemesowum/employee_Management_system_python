@@ -1,0 +1,10 @@
+npm install express
+npm i cors
+npm i class-validator
+npm i class-transformaer
+npm i prisma
+npm i dotenv
+npm i bcrypt
+npm i jsonwebtoken
+npx prisma init
+.env 
