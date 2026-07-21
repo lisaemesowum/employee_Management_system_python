@@ -10,144 +10,127 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-
 }
 
 // ==============================================================================
 
-enum UserStatus{
+enum UserStatus {
   PENDING
   ACTIVE
   INACTIVE
   SUSPENDED
 }
 
-enum Gender{
+enum Gender {
   MALE
   FEMALE
 }
 
-model User{
-  id                    String        @id @default(uuid())   // @id ->primary key (uuid) generate an id 
-  firstName             String 
-  lastName              String 
-  email                 String        @unique                // cant share the same email
-  phone                 String        @unique
-  passwordHash          String
-  emailVerified         Boolean 
-  lastLoginAt           DateTime?
-  status                UserStatus    @default(PENDING)
-  createdAt             DateTime      @default(now())
-  updated               DateTime      @updatedAt
-  role                  Role?         @relation(fields: [roleId], reference: [id])
-  roleId                String?
- 
-  profile               Profile?
-  refreshToken          RefreshToken[]
-  audilogs              Auditlog[]
+model User {
+  id            String     @id @default(uuid()) // @id ->primary key (uuid) generate an id 
+  firstName     String
+  lastName      String
+  email         String     @unique // cant share the same email
+  phone         String     @unique
+  passwordHash  String
+  emailVerified Boolean
+  lastLoginAt   DateTime?
+  status        UserStatus @default(PENDING)
+  createdAt     DateTime   @default(now())
+  updated       DateTime   @updatedAt
+  role          Role?      @relation(fields: [roleId], references: [id])
+  roleId        String?
 
+  profile      Profile?
+  refreshToken RefreshToken[]
+  audilogs     Auditlog[]
 
   @@index([roleId])
   @@index([status])
-
-
 }
 
-model Role{
-  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id 
-  name                  String        @unique
-  slug                  String        @unique
-  description           String?                            // Optional field
-  user                  User[]
-  rolePermission        RolePermission[]
+model Role {
+  id             String           @id @default(uuid()) // @id ->primary key (uuid) generate an id 
+  name           String           @unique
+  slug           String           @unique
+  description    String? // Optional field
+  user           User[]
+  rolePermission RolePermission[]
 
-
-  createdAt             DateTime      @default(now())
-  updated               DateTime      @updatedAt
-
+  createdAt DateTime @default(now())
+  updated   DateTime @updatedAt
 }
 
+model Permission {
+  id             String           @id @default(uuid()) // @id ->primary key (uuid) generate an id 
+  name           String           @unique
+  slug           String           @unique
+  description    String? // not required 
+  rolePermission RolePermission[]
 
-model Permission{
-  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id 
-  name                  String        @unique
-  slug                  String        @unique
-  description           String?                            // not required 
-  rolePermission        RolePermission[]
-
-
-  createdAt             DateTime      @default(now())
-  updated               DateTime      @updatedAt
-
+  createdAt DateTime @default(now())
+  updated   DateTime @updatedAt
 }
 
-model RolePermission{
-  roleId                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id
-  permissionId              String
+model RolePermission {
+  roleId       String
+  permissionId String
 
-  permission                Permission?   @relation(fields:[permissionId], reference:[id],onDelete: Cascade)
-  createdAt                 DateTime      @default(now())
-  updated                   DateTime      @updatedAt
-  roleId                    Role          @relation(fields:[permissionId], reference:[id],onDelete: Cascade)
-
+  role       Role        @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission Permission? @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime    @default(now())
+  updated    DateTime    @updatedAt
 
   @@id([roleId, permissionId])
   @@index([roleId])
   @@index([permissionId])
 }
 
-model Profile{
-  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id
-  gender                Gender
-  dateOfBirth           DateTime?
-  avartar               String?
-  bio                   String?
-  city                  String?
-  state                 String?
-  country               String?
-  postalCode            String?
-  userId                String          @unique
-  
-  user User             @relation(fields: [userId], reference:[id],onDelete:Cascade)
+model Profile {
+  id          String    @id @default(uuid()) // @id ->primary key (uuid) generate an id
+  gender      Gender
+  dateOfBirth DateTime?
+  avartar     String?
+  bio         String?
+  city        String?
+  state       String?
+  country     String?
+  postalCode  String?
+  userId      String    @unique
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-model RefreshToken{
-  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id
-  token                 String        @unique
-  expiresat             DateTime
-  IsRevoked             Boolean       @default(false)
-  revokedAt             DateTime?
-  deviceName            String?
-  iPAddress             String?
-  userAgent             String?
-  UserId                String
-  user                  User          @reference(fields:[UserId], reference:[id], onDelete: Cascade)
-  createdAt             DateTime      @default(now())
+model RefreshToken {
+  id         String    @id @default(uuid()) // @id ->primary key (uuid) generate an id
+  token      String    @unique
+  expiresat  DateTime
+  IsRevoked  Boolean   @default(false)
+  revokedAt  DateTime?
+  deviceName String?
+  iPAddress  String?
+  userAgent  String?
+  UserId     String
+  user       User      @relation(fields: [UserId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
 
   @@index([UserId])
 }
 
-model Auditlog{
-  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id
-  action                String  
-  entity                String?
+model Auditlog {
+  id     String  @id @default(uuid()) // @id ->primary key (uuid) generate an id
+  action String
+  entity String?
 
-  description           String?
-  iPAddress             String?
-  userAgent             String?
-  metadata              Json?
-  UserId                String?
-  user                  User?          @reference(fields:[UserId], reference:[id] onDelete: SetNull)
+  description String?
+  iPAddress   String?
+  userAgent   String?
+  metadata    Json?
+  UserId      String?
+  user        User?   @relation(fields: [UserId], references: [id], onDelete: SetNull)
 
-  createdAt             DateTime       @default(now())
+  createdAt DateTime @default(now())
 
   @@index([UserId])
   @@index([entity])
-
-
-
-
-
-
-
 }
