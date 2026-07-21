@@ -10,9 +10,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+
 }
 
-# ==============================================================================
+// ==============================================================================
+
 enum UserStatus{
   PENDING
   ACTIVE
@@ -26,10 +28,10 @@ enum Gender{
 }
 
 model User{
-  id                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id 
+  id                    String        @id @default(uuid())   // @id ->primary key (uuid) generate an id 
   firstName             String 
   lastName              String 
-  email                 String        @unique              # cant share the same email
+  email                 String        @unique                // cant share the same email
   phone                 String        @unique
   passwordHash          String
   emailVerified         Boolean 
@@ -39,16 +41,23 @@ model User{
   updated               DateTime      @updatedAt
   role                  Role?         @relation(fields: [roleId], reference: [id])
   roleId                String?
+ 
+  profile               Profile?
+  refreshToken          RefreshToken[]
+  audilogs              Auditlog[]
 
-  profile Profile?
-  refreshToken  RefreshToken[]
+
+  @@index([roleId])
+  @@index([status])
+
+
 }
 
 model Role{
-  id                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id 
+  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id 
   name                  String        @unique
   slug                  String        @unique
-  description           String?                            # not required 
+  description           String?                            // Optional field
   user                  User[]
   rolePermission        RolePermission[]
 
@@ -60,10 +69,10 @@ model Role{
 
 
 model Permission{
-  id                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id 
+  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id 
   name                  String        @unique
   slug                  String        @unique
-  description           String?                            # not required 
+  description           String?                            // not required 
   rolePermission        RolePermission[]
 
 
@@ -73,7 +82,7 @@ model Permission{
 }
 
 model RolePermission{
-  roleId                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id
+  roleId                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id
   permissionId              String
 
   permission                Permission?   @relation(fields:[permissionId], reference:[id],onDelete: Cascade)
@@ -88,7 +97,7 @@ model RolePermission{
 }
 
 model Profile{
-  Id                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id
+  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id
   gender                Gender
   dateOfBirth           DateTime?
   avartar               String?
@@ -103,7 +112,7 @@ model Profile{
 }
 
 model RefreshToken{
-  Id                    String        @id @default(uuid()) # @id ->primary key (uuid) generate an id
+  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id
   token                 String        @unique
   expiresat             DateTime
   IsRevoked             Boolean       @default(false)
@@ -116,7 +125,24 @@ model RefreshToken{
   createdAt             DateTime      @default(now())
 
   @@index([UserId])
-  
+}
+
+model Auditlog{
+  id                    String        @id @default(uuid()) // @id ->primary key (uuid) generate an id
+  action                String  
+  entity                String?
+
+  description           String?
+  iPAddress             String?
+  userAgent             String?
+  metadata              Json?
+  UserId                String?
+  user                  User?          @reference(fields:[UserId], reference:[id] onDelete: SetNull)
+
+  createdAt             DateTime       @default(now())
+
+  @@index([UserId])
+  @@index([entity])
 
 
 
