@@ -1,12 +1,18 @@
-import bcrypt from 'bcrypt'
-// import {config} from @config
+import bcrypt from "bcrypt";
 
 export class BcryptUtils {
-  static async hashPassword(password: string): Promise<string> {
-    return await bcrypt.hash(password, 12)
+  private static readonly SALT_ROUNDS = 12;
+
+  private constructor() {}
+
+  static async hash(password: string): Promise<string> {
+    return bcrypt.hash(password, this.SALT_ROUNDS);
   }
 
-  static async comparePassword(plainPassword: string, hashedPassword: string): Promise<boolean> {
-    return await bcrypt.compare(plainPassword, hashedPassword)
+  static async compare(
+    plainPassword: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return bcrypt.compare(plainPassword, hashedPassword);
   }
 }
