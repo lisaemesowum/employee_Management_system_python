@@ -3,11 +3,11 @@ import type { Request, Response } from "express";
 import {
   successResponse,
   type ApiSuccessResponse,
-} from "../../../common/responses/api.response.js";
-
-import type { PublicUserRecord } from "../../users/repositories/user.repository.js";
+} from "../../../common/response/api.response";
+// import type { PublicUserRecord } from "../../../modules/auth/services/validators/users/user.repository";
+import type { PublicUserRecord } from "../services/validators/users/user.repository";
 import type { RegisterDto } from "../dtos/register.dto.js";
-import { AuthService } from "../services/auth.service.js";
+import { AuthService } from "../services/validators/users/respositories/routes/auth.services";
 
 export class AuthController {
   constructor(private readonly authService: AuthService) {}

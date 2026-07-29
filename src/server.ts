@@ -1,8 +1,8 @@
 import type { Server } from "node:http";
 
 import { app } from "./app.js";
-import { env } from "./config/env.config.js";
-import prisma  from "./config/db.config.js";
+import { env } from "./common/config/env.config.js";
+import prisma from "./common/config/db.config.js";
 
 let server: Server | undefined;
 

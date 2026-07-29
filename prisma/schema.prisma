@@ -31,7 +31,7 @@ model User {
   firstName     String
   lastName      String
   email         String     @unique // cant share the same email
-  phone         String     @unique
+  phone         String?    @unique
   passwordHash  String
   emailVerified Boolean
   lastLoginAt   DateTime?

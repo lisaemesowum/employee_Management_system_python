@@ -5,7 +5,8 @@ import express from "express";
 
 import { errorMiddleware } from "./common/middleware/error.middleware.js";
 import { notFoundMiddleware } from "./common/middleware/not-found.middleware.js";
-import { apiRouter } from "./routes/index.js";
+// import { apiRouter } from "./routes/index.js";
+import { apiRouter } from "./modules/routes/api.routes.js";
 
 export const app = express();
 

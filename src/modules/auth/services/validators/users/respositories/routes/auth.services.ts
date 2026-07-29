@@ -5,7 +5,7 @@ import {
   type CreateUserInput,
   type PublicUserRecord,
   UserRepository,
-} from "../../users/repositories/user.repository.js";
+} from "../../../users/user.repository";
 
 import type { RegisterDto } from "../../../../../../auth/dtos/register.dto.js";
 

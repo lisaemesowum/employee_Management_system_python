@@ -5,7 +5,7 @@ async function main(){
     // login password
     const password = "12345";
 
-    const hashpassword = await BcryptUtils.hashPassword(password);
+    const hashpassword = await BcryptUtils.hash(password);
 
     console.log(hashpassword);
 }
