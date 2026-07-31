@@ -8,3 +8,28 @@ npm i bcrypt
 npm i jsonwebtoken
 npx prisma init
 .env 
+
+
+then when you  are done with the project do 
+npm run dev or npm start
+
+Then 
+
+    look closely at the terminal output. 
+    Note down the Port Number it gives you 
+    (e.g., Ready on http://localhost:3000 or Server running on port 400).
+      
+ Set Up Postman
+    Open the Postman desktop application
+    .Click the + (New Request) tab in the center workspace.
+    Set your HTTP Method using the dropdown menu (choose GET for fetching data, or POST for sending data).
+    Enter your local server URL into the address bar. It will look like this:
+    (http://localhost:4000/api/v1/auth/register)
+
+    i heard problem in the package.json the start place 
+    i added this 
+    "start": "tsx src/server.ts",
+    "start:prod": "node dist/server.js",
+
+
+
